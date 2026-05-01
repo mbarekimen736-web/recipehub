@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Recette{% endblock %}
+
+{% block body %}
+    <h1>Modifier Recette</h1>
+    {{ form_start(recetteForm) }}
+        {{ form_widget(recetteForm) }}
+        <button type="submit">Enregistrer</button>
+    {{ form_end(recetteForm) }}
+{% endblock %}

@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Repository;
+
+use App\Entity\Recette;
+use App\Entity\CategorieRecette;
+use App\Entity\TagRecette;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+
+class RecetteRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Recette::class);
+    }
+
+    /**
+     * @return Recette[]
+     */
+    public function findByFilters(?string $titre, ?CategorieRecette $cat, ?string $diff, ?TagRecette $tag): array
+    {
+        $qb = $this->createQueryBuilder('r');
+
+        if ($titre) {
+            $qb->andWhere('r.titre LIKE :titre')
+               ->setParameter('titre', '%' . $titre . '%');
+        }
+        if ($cat) {
+            $qb->andWhere('r.categorie = :cat')
+               ->setParameter('cat', $cat);
+        }
+        if ($diff) {
+            $qb->andWhere('r.difficulte = :diff')
+               ->setParameter('diff', $diff);
+        }
+        if ($tag) {
+            $qb->innerJoin('r.tags', 't')
+               ->andWhere('t = :tag')
+               ->setParameter('tag', $tag);
+        }
+
+        return $qb->orderBy('r.dateCreation', 'DESC')
+                  ->getQuery()->getResult();
+    }
+
+    /**
+     * @return Recette[]
+     */
+    public function findLastPublished(int $limit = 3): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.publiee = true')
+            ->orderBy('r.dateCreation', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+}

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recettes{% endblock %}
+
+{% block body %}
+    <h1>Recettes</h1>
+
+    <div class="grid">
+        {% for recette in recettes %}
+            <div class="card">
+                <h3><a href="{{ path('recette_show', {id: recette.id}) }}">{{ recette.titre }}</a></h3>
+                <p>{{ recette.description|slice(0,100) ~ '...' }}</p>
+                <p>Difficulté: {{ recette.difficulte }}</p>
+            </div>
+        {% else %}
+            <p>Aucune recette.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

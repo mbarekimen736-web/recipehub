@@ -19,6 +19,10 @@
         {% endif %}
     </head>
     <body>
+        <nav>
+            <a href="{{ path('recette_index') }}">Recettes</a>
+            <a href="{{ path('mes_favoris') }}">Mes favoris {% set fav = app.session.get('favorites') %}{% if fav %}<span class="badge">{{ fav|length }}</span>{% endif %}</a>
+        </nav>
         {% block body %}{% endblock %}
     </body>
 </html>

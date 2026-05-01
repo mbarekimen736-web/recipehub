@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+    <h1>Bienvenue sur RecipeHub</h1>
+    <div>
+        <p>Recettes publiées: {{ stats.totalPubliees }}</p>
+        <p>Moyenne d'ingrédients par recette: {{ stats.moyenneIngredients|number_format(2, ',', ' ') }}</p>
+        <h3>Répartition par catégorie</h3>
+        <ul>
+            {% for cat, count in stats.parCategorie %}
+                <li>{{ cat }}: {{ count }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
