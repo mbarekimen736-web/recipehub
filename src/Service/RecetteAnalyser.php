@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\Recette;
 use App\Repository\RecetteRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class RecetteAnalyser
 {
@@ -19,17 +18,16 @@ class RecetteAnalyser
 
     public function getTotalRecettesPubliees(): int
     {
-        $all = $this->repo->findBy(['publiee' => true]);
-        return count($all);
+        return count($this->repo->findBy(['publiee' => true]));
     }
 
     public function getRecettesParCategorie(): array
     {
         $all = $this->repo->findAll();
         $res = [];
+
         foreach ($all as $r) {
-            $cat = $r->getCategorie() ? $r->getCategorie()->getNom() : 'Sans catégorie';
-            $res[$cat] = ($res[$cat] ?? 0) + 1;
+            $res['Sans catégorie'] = ($res['Sans catégorie'] ?? 0) + 1;
         }
 
         return $res;
@@ -38,15 +36,17 @@ class RecetteAnalyser
     public function getMoyenneIngredients(): float
     {
         $all = $this->repo->findAll();
+
         if (count($all) === 0) {
-            return 0.0;
+            return 0;
         }
 
-        $totalIngredients = 0;
+        $total = 0;
+
         foreach ($all as $r) {
-            $totalIngredients += count($r->getIngredients());
+            $total += method_exists($r, 'getIngredients') ? count($r->getIngredients()) : 0;
         }
 
-        return $totalIngredients / count($all);
+        return $total / count($all);
     }
 }

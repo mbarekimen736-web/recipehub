@@ -1,14 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes favoris{% endblock %}
+{% block title %}Favorites{% endblock %}
 
 {% block body %}
-    <h1>Mes favoris</h1>
-    {% for recette in recettes %}
-        <div>
-            <a href="{{ path('recette_show', {id: recette.id}) }}">{{ recette.titre }}</a>
-        </div>
-    {% else %}
-        <p>Vous n'avez pas de favoris.</p>
-    {% endfor %}
+
+<h1>Mes Favoris</h1>
+
+{% for recette in recettes %}
+    <div>
+        <h3>{{ recette.titre }}</h3>
+    </div>
+{% else %}
+    <p>Aucun favori.</p>
+{% endfor %}
+
 {% endblock %}

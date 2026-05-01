@@ -3,29 +3,43 @@
 {% block title %}{{ recette.titre }}{% endblock %}
 
 {% block body %}
+
+<div class="card shadow p-3">
+
     <h1>{{ recette.titre }}</h1>
 
-    <div class="row">
-        <div class="col-4">
-            <h3>Ingrédients</h3>
-            <ul>
-                {% for ing in recette.ingredients %}
-                    <li>{{ ing.quantite }} - {{ ing.nom }}</li>
-                {% else %}
-                    <li>Aucun ingrédient.</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="col-8">
-            <h3>Instructions</h3>
-            <p>{{ recette.instructions|nl2br }}</p>
-        </div>
-    </div>
+    <p>{{ recette.description }}</p>
 
-    <p><a href="{{ path('recette_edit', {id: recette.id}) }}">Modifier</a></p>
+    <hr>
 
-    <form method="post" action="{{ path('recette_delete', {id: recette.id}) }}" onsubmit="return confirm('Supprimer cette recette ?');">
+    <h4>Ingredients</h4>
+    <ul>
+        {% for ing in recette.ingredients %}
+            <li>{{ ing.quantite }} - {{ ing.nom }}</li>
+        {% else %}
+            <li>Aucun ingrédient</li>
+        {% endfor %}
+    </ul>
+
+    <h4>Instructions</h4>
+    <p>{{ recette.instructions }}</p>
+
+    <hr>
+
+    <a class="btn btn-warning"
+       href="{{ path('recette_edit', {id: recette.id}) }}">
+        Edit
+    </a>
+
+    <form method="post"
+          action="{{ path('recette_delete', {id: recette.id}) }}"
+          style="display:inline"
+          onsubmit="return confirm('Supprimer ?');">
+
         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ recette.id) }}">
-        <button type="submit">Supprimer</button>
+        <button class="btn btn-danger">Delete</button>
     </form>
+
+</div>
+
 {% endblock %}
