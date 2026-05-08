@@ -1,16 +1,60 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Nos recettes{% endblock %}
+
 {% block body %}
-
-<h1>RecipeHub</h1>
-
-<p>Recettes publiées: {{ recettes|length }}</p>
-
-{% for r in recettes %}
-    <h3>{{ r.titre }}</h3>
-    <p>{{ r.description }}</p>
-{% else %}
-    <p>Aucune recette</p>
-{% endfor %}
-
+<div class="container mt-4">
+    <h1 class="mb-4">🍳 Nos recettes</h1>
+    
+    <div class="row">
+        {% for recette in recettes %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if recette.imageName %}
+                        <img src="{{ asset('uploads/recettes/' ~ recette.imageName) }}" 
+                             class="card-img-top" 
+                             alt="{{ recette.titre }}"
+                             style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" 
+                             style="height: 200px;">
+                            <i class="fas fa-utensils fa-3x"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ recette.titre }}</h5>
+                        <p class="card-text">{{ recette.description|slice(0, 100) }}...</p>
+                        
+                        <div class="mb-2">
+                            <span class="badge bg-primary">{{ recette.categorie.nom ?? 'Sans catégorie' }}</span>
+                            <span class="badge 
+                                {% if recette.difficulte == 'facile' %}bg-success
+                                {% elseif recette.difficulte == 'moyen' %}bg-warning
+                                {% else %}bg-danger
+                                {% endif %}">
+                                {{ recette.difficulte|upper }}
+                            </span>
+                        </div>
+                        
+                        <p class="card-text">
+                            <small class="text-muted">
+                                ⏱️ {{ recette.tempsPreparation + (recette.tempsCuisson ?? 0) }} min
+                                👥 {{ recette.nbPersonnes }} pers
+                            </small>
+                        </p>
+                        
+                        <a href="{{ path('recette_show', {'id': recette.id}) }}" class="btn btn-primary">
+                            Voir la recette
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <p>Aucune recette disponible.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

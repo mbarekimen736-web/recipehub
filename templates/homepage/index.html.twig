@@ -1,17 +1,147 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Accueil - RecipeHub{% endblock %}
 
 {% block body %}
-    <h1>Bienvenue sur RecipeHub</h1>
-    <div>
-        <p>Recettes publiées: {{ stats.totalPubliees }}</p>
-        <p>Moyenne d'ingrédients par recette: {{ stats.moyenneIngredients|number_format(2, ',', ' ') }}</p>
-        <h3>Répartition par catégorie</h3>
-        <ul>
-            {% for cat, count in stats.parCategorie %}
-                <li>{{ cat }}: {{ count }}</li>
-            {% endfor %}
-        </ul>
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">🍳 Bienvenue sur RecipeHub</h1>
+    
+    <div class="row">
+        <!-- Carte statistiques générales -->
+        <div class="col-md-6 mb-4">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-chart-line"></i> Statistiques générales
+                    </h5>
+                    <hr>
+                    <p class="card-text">
+                        <strong>📚 Total recettes publiées :</strong> {{ stats.totalPubliees }}<br>
+                        <strong>🥄 Moyenne d'ingrédients :</strong> {{ stats.moyenneIngredients|number_format(2, ',', ' ') }} par recette
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Carte répartition par catégorie -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Répartition par catégorie</h5>
+                </div>
+                <div class="card-body">
+                    {% if stats.parCategorie|length > 0 %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Catégorie</th>
+                                        <th class="text-end">Nombre de recettes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cat, count in stats.parCategorie %}
+                                        <tr>
+                                            <td>
+                                                {% if cat == 'Sans catégorie' %}
+                                                    📂 {{ cat }}
+                                                {% elseif cat == 'Entrée' %}
+                                                    🥗 {{ cat }}
+                                                {% elseif cat == 'Plat' %}
+                                                    🍝 {{ cat }}
+                                                {% elseif cat == 'Dessert' %}
+                                                    🍰 {{ cat }}
+                                                {% elseif cat == 'Boisson' %}
+                                                    🥤 {{ cat }}
+                                                {% elseif cat == 'Snack' %}
+                                                    🍕 {{ cat }}
+                                                {% elseif cat == 'Soupe' %}
+                                                    🥣 {{ cat }}
+                                                {% else %}
+                                                    {{ cat }}
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-end">
+                                                <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center">Aucune recette disponible</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
+    
+    <div class="row mt-2">
+        <!-- Statistiques supplémentaires si disponibles -->
+        {% if stats.tempsMoyenPreparation is defined %}
+        <div class="col-md-4 mb-4">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h3>⏱️ {{ stats.tempsMoyenPreparation }} min</h3>
+                    <p class="mb-0">Temps de préparation moyen</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if stats.parDifficulte is defined %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-4">
+                            <span class="badge bg-success fs-6 p-2">🟢 Facile<br>{{ stats.parDifficulte.facile }}</span>
+                        </div>
+                        <div class="col-4">
+                            <span class="badge bg-warning fs-6 p-2">🟡 Moyen<br>{{ stats.parDifficulte.moyen }}</span>
+                        </div>
+                        <div class="col-4">
+                            <span class="badge bg-danger fs-6 p-2">🔴 Difficile<br>{{ stats.parDifficulte.difficile }}</span>
+                        </div>
+                    </div>
+                    <p class="mt-2 mb-0 text-muted">Répartition par difficulté</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="col-md-4 mb-4">
+            <div class="card bg-warning h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-utensils fs-1"></i>
+                    <h5 class="mt-2">Prêt à cuisiner ?</h5>
+                    <a href="{{ path('recette_index') }}" class="btn btn-dark mt-2">
+                        Voir toutes les recettes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Version simplifiée (liste simple) -->
+    <div class="mt-4">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">📊 Résumé rapide</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li>📚 <strong>Recettes publiées :</strong> {{ stats.totalPubliees }}</li>
+                    <li>🥄 <strong>Moyenne d'ingrédients :</strong> {{ stats.moyenneIngredients|number_format(2, ',', ' ') }} par recette</li>
+                    <li>📂 <strong>Catégories :</strong> 
+                        {% for cat, count in stats.parCategorie %}
+                            {{ cat }} ({{ count }}){% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

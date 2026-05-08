@@ -1,0 +1,106 @@
+{# templates/emails/nouvelle_recette.html.twig #}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Nouvelle recette sur RecipeHub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 0 0 10px 10px;
+        }
+        .info {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-facile { background: #28a745; color: white; }
+        .badge-moyen { background: #ffc107; color: #333; }
+        .badge-difficile { background: #dc3545; color: white; }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🍳 Nouvelle recette sur RecipeHub</h1>
+    </div>
+    
+    <div class="content">
+        <h2>{{ recette.titre }}</h2>
+        
+        <div class="info">
+            <p><strong>👨‍🍳 Auteur :</strong> {{ recette.auteur.pseudo }}</p>
+            <p><strong>📂 Catégorie :</strong> {{ recette.categorie.nom }}</p>
+            <p><strong>⏱️ Temps total :</strong> {{ recette.tempsPreparation + (recette.tempsCuisson ?? 0) }} minutes</p>
+            <p>
+                <strong>📊 Difficulté :</strong>
+                <span class="badge 
+                    {% if recette.difficulte == 'facile' %}badge-facile
+                    {% elseif recette.difficulte == 'moyen' %}badge-moyen
+                    {% else %}badge-difficile
+                    {% endif %}">
+                    {{ recette.difficulte|upper }}
+                </span>
+            </p>
+            <p><strong>👥 Nombre de personnes :</strong> {{ recette.nbPersonnes }}</p>
+        </div>
+        
+        <div class="info">
+            <h3>📝 Description</h3>
+            <p>{{ recette.description|slice(0, 200) }}{% if recette.description|length > 200 %}...{% endif %}</p>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="{{ url('recette_show', {'id': recette.id}) }}" class="btn">
+                Voir la recette
+            </a>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Cet email a été envoyé automatiquement par RecipeHub.</p>
+        <p>© 2024 RecipeHub - Tous droits réservés</p>
+    </div>
+</body>
+</html>

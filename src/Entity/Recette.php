@@ -95,7 +95,31 @@ class Recette
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $auteur = null;
+// src/Entity/Recette.php
 
+#[ORM\Column(length: 255, nullable: true)]
+private ?string $imageName = null;
+
+// Getters et setters
+public function getImageName(): ?string
+{
+    return $this->imageName;
+}
+
+public function setImageName(?string $imageName): self
+{
+    $this->imageName = $imageName;
+    return $this;
+}
+
+// Méthode utilitaire pour le chemin complet de l'image
+public function getImagePath(): ?string
+{
+    if (!$this->imageName) {
+        return null;
+    }
+    return '/uploads/recettes/' . $this->imageName;
+}
     #[ORM\ManyToMany(targetEntity: TagRecette::class, inversedBy: 'recettes')]
     private Collection $tags;
 

@@ -16,6 +16,8 @@ class HomepageController extends AbstractController
             'totalPubliees' => $analyser->getTotalRecettesPubliees(),
             'parCategorie' => $analyser->getRecettesParCategorie(),
             'moyenneIngredients' => $analyser->getMoyenneIngredients(),
+            'tempsMoyenPreparation' => $analyser->getTempsMoyenPreparation(),
+            'parDifficulte' => $analyser->getRecettesParDifficulte(),
         ];
 
         return $this->render('homepage/index.html.twig', ['stats' => $stats]);

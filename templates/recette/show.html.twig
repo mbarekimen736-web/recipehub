@@ -3,43 +3,72 @@
 {% block title %}{{ recette.titre }}{% endblock %}
 
 {% block body %}
-
-<div class="card shadow p-3">
-
-    <h1>{{ recette.titre }}</h1>
-
-    <p>{{ recette.description }}</p>
-
-    <hr>
-
-    <h4>Ingredients</h4>
-    <ul>
-        {% for ing in recette.ingredients %}
-            <li>{{ ing.quantite }} - {{ ing.nom }}</li>
-        {% else %}
-            <li>Aucun ingrédient</li>
-        {% endfor %}
-    </ul>
-
-    <h4>Instructions</h4>
-    <p>{{ recette.instructions }}</p>
-
-    <hr>
-
-    <a class="btn btn-warning"
-       href="{{ path('recette_edit', {id: recette.id}) }}">
-        Edit
-    </a>
-
-    <form method="post"
-          action="{{ path('recette_delete', {id: recette.id}) }}"
-          style="display:inline"
-          onsubmit="return confirm('Supprimer ?');">
-
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ recette.id) }}">
-        <button class="btn btn-danger">Delete</button>
-    </form>
-
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>{{ recette.titre }}</h1>
+            
+            {% if recette.imageName %}
+                <img src="{{ asset('uploads/recettes/' ~ recette.imageName) }}" 
+                     class="img-fluid rounded mb-4" 
+                     alt="{{ recette.titre }}">
+            {% else %}
+                <div class="bg-secondary text-white rounded mb-4 d-flex align-items-center justify-content-center" 
+                     style="height: 300px;">
+                    <i class="fas fa-utensils fa-5x"></i>
+                </div>
+            {% endif %}
+            
+            <div class="mb-4">
+                <span class="badge bg-primary">{{ recette.categorie.nom ?? 'Sans catégorie' }}</span>
+                <span class="badge 
+                    {% if recette.difficulte == 'facile' %}bg-success
+                    {% elseif recette.difficulte == 'moyen' %}bg-warning
+                    {% else %}bg-danger
+                    {% endif %}">
+                    {{ recette.difficulte|upper }}
+                </span>
+            </div>
+            
+            <h3>📝 Description</h3>
+            <p>{{ recette.description }}</p>
+            
+            <h3>📖 Instructions</h3>
+            <p>{{ recette.instructions|nl2br }}</p>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">ℹ️ Informations</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>⏱️ Préparation :</strong> {{ recette.tempsPreparation }} min</p>
+                    {% if recette.tempsCuisson %}
+                        <p><strong>🔥 Cuisson :</strong> {{ recette.tempsCuisson }} min</p>
+                    {% endif %}
+                    <p><strong>⏲️ Total :</strong> {{ recette.tempsPreparation + (recette.tempsCuisson ?? 0) }} min</p>
+                    <p><strong>👥 Personnes :</strong> {{ recette.nbPersonnes }}</p>
+                    <p><strong>📅 Créée le :</strong> {{ recette.dateCreation|date('d/m/Y') }}</p>
+                    <p><strong>👨‍🍳 Auteur :</strong> {{ recette.auteur.pseudo }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="{{ path('recette_index') }}" class="btn btn-secondary">← Retour</a>
+        
+        {% if is_granted('ROLE_CUISINIER') and (app.user == recette.auteur or is_granted('ROLE_ADMIN')) %}
+            <a href="{{ path('recette_edit', {'id': recette.id}) }}" class="btn btn-warning">✏️ Modifier</a>
+            
+            <form action="{{ path('recette_delete', {'id': recette.id}) }}" method="post" style="display: inline-block;">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ recette.id) }}">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Supprimer cette recette ?')">
+                    🗑️ Supprimer
+                </button>
+            </form>
+        {% endif %}
+    </div>
 </div>
-
 {% endblock %}
