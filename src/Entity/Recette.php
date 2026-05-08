@@ -85,6 +85,10 @@ class Recette
     #[Groups(['recette:read'])]
     private ?bool $publiee = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['recette:read'])]
+    private ?string $imageName = null;
+
     #[ORM\ManyToOne(targetEntity: CategorieRecette::class, inversedBy: 'recettes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?CategorieRecette $categorie = null;
@@ -95,31 +99,7 @@ class Recette
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $auteur = null;
-// src/Entity/Recette.php
 
-#[ORM\Column(length: 255, nullable: true)]
-private ?string $imageName = null;
-
-// Getters et setters
-public function getImageName(): ?string
-{
-    return $this->imageName;
-}
-
-public function setImageName(?string $imageName): self
-{
-    $this->imageName = $imageName;
-    return $this;
-}
-
-// Méthode utilitaire pour le chemin complet de l'image
-public function getImagePath(): ?string
-{
-    if (!$this->imageName) {
-        return null;
-    }
-    return '/uploads/recettes/' . $this->imageName;
-}
     #[ORM\ManyToMany(targetEntity: TagRecette::class, inversedBy: 'recettes')]
     private Collection $tags;
 
@@ -159,6 +139,17 @@ public function getImagePath(): ?string
 
     public function isPubliee(): ?bool { return $this->publiee; }
     public function setPubliee(bool $p): self { $this->publiee = $p; return $this; }
+
+    public function getImageName(): ?string { return $this->imageName; }
+    public function setImageName(?string $imageName): self { $this->imageName = $imageName; return $this; }
+
+    public function getImagePath(): ?string
+    {
+        if (!$this->imageName) {
+            return null;
+        }
+        return '/uploads/recettes/' . $this->imageName;
+    }
 
     public function getCategorie(): ?CategorieRecette { return $this->categorie; }
     public function setCategorie(?CategorieRecette $categorie): self { $this->categorie = $categorie; return $this; }

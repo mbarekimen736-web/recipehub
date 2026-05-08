@@ -6,7 +6,7 @@
     <php>
         <server name="KERNEL_CLASS" value="App\Kernel"/>
         <server name="APP_ENV" value="test"/>
-        <env name="DATABASE_URL" value="sqlite:///%kernel.project_dir%/var/test.db"/>
+        <env name="DATABASE_URL" value="mysql://dsi2.1:dsi2.1@127.0.0.1:3306/recipehub_test?serverVersion=8.0.32"/>
     </php>
     <testsuites>
         <testsuite name="Project Test Suite">

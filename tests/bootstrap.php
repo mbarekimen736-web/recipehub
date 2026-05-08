@@ -4,10 +4,13 @@ use Symfony\Component\Dotenv\Dotenv;
 
 require dirname(__DIR__).'/vendor/autoload.php';
 
-if (method_exists(Dotenv::class, 'bootEnv')) {
-    (new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
+// Charger .env.test
+if (file_exists(dirname(__DIR__).'/.env.test')) {
+    (new Dotenv())->load(dirname(__DIR__).'/.env.test');
 }
 
-if ($_SERVER['APP_DEBUG']) {
-    umask(0000);
+// S'assurer que KERNEL_CLASS est défini
+if (!$_SERVER['KERNEL_CLASS'] ?? !getenv('KERNEL_CLASS')) {
+    putenv('KERNEL_CLASS=App\Kernel');
+    $_SERVER['KERNEL_CLASS'] = $_ENV['KERNEL_CLASS'] = 'App\Kernel';
 }

@@ -8,6 +8,12 @@
         <div class="col-md-8">
             <h1>{{ recette.titre }}</h1>
             
+            {# Affichage des étoiles de difficulté #}
+            <div class="mb-2">
+                {{ difficulty_stars(recette.difficulte) }}
+                <span class="text-muted">({{ recette.difficulte }})</span>
+            </div>
+            
             {% if recette.imageName %}
                 <img src="{{ asset('uploads/recettes/' ~ recette.imageName) }}" 
                      class="img-fluid rounded mb-4" 
@@ -21,13 +27,6 @@
             
             <div class="mb-4">
                 <span class="badge bg-primary">{{ recette.categorie.nom ?? 'Sans catégorie' }}</span>
-                <span class="badge 
-                    {% if recette.difficulte == 'facile' %}bg-success
-                    {% elseif recette.difficulte == 'moyen' %}bg-warning
-                    {% else %}bg-danger
-                    {% endif %}">
-                    {{ recette.difficulte|upper }}
-                </span>
             </div>
             
             <h3>📝 Description</h3>
@@ -43,13 +42,13 @@
                     <h5 class="mb-0">ℹ️ Informations</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>⏱️ Préparation :</strong> {{ recette.tempsPreparation }} min</p>
+                    <p><strong>⏱️ Préparation :</strong> {{ recette.tempsPreparation|cooking_time_format }}</p>
                     {% if recette.tempsCuisson %}
-                        <p><strong>🔥 Cuisson :</strong> {{ recette.tempsCuisson }} min</p>
+                        <p><strong>🔥 Cuisson :</strong> {{ recette.tempsCuisson|cooking_time_format }}</p>
                     {% endif %}
-                    <p><strong>⏲️ Total :</strong> {{ recette.tempsPreparation + (recette.tempsCuisson ?? 0) }} min</p>
+                    <p><strong>⏲️ Total :</strong> {{ (recette.tempsPreparation + (recette.tempsCuisson ?? 0))|cooking_time_format }}</p>
                     <p><strong>👥 Personnes :</strong> {{ recette.nbPersonnes }}</p>
-                    <p><strong>📅 Créée le :</strong> {{ recette.dateCreation|date('d/m/Y') }}</p>
+                    <p><strong>📅 Créée :</strong> {{ recette.dateCreation|time_ago }}</p>
                     <p><strong>👨‍🍳 Auteur :</strong> {{ recette.auteur.pseudo }}</p>
                 </div>
             </div>

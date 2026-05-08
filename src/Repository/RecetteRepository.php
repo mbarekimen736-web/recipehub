@@ -10,38 +10,40 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class RecetteRepository extends ServiceEntityRepository
 {
+    
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Recette::class);
     }
 
-    public function findByFilters($titre, $categorie, $difficulte, $tag): array
-    {
-        $qb = $this->createQueryBuilder('r');
+    // src/Repository/RecetteRepository.php
 
-        if ($titre) {
-            $qb->andWhere('r.titre LIKE :titre')
-               ->setParameter('titre', "%$titre%");
-        }
+public function findByFilters(?string $titre, ?CategorieRecette $categorie, ?string $difficulte, ?TagRecette $tag): \Doctrine\ORM\QueryBuilder
+{
+    $qb = $this->createQueryBuilder('r')
+        ->leftJoin('r.tags', 't');
 
-        if ($categorie) {
-            $qb->andWhere('r.categorie = :categorie')
-               ->setParameter('categorie', $categorie);
-        }
-
-        if ($difficulte) {
-            $qb->andWhere('r.difficulte = :difficulte')
-               ->setParameter('difficulte', $difficulte);
-        }
-
-        if ($tag) {
-            $qb->join('r.tags', 't')
-               ->andWhere('t.id = :tag')
-               ->setParameter('tag', $tag);
-        }
-
-        return $qb->orderBy('r.dateCreation', 'DESC')
-                  ->getQuery()
-                  ->getResult();
+    if ($titre) {
+        $qb->andWhere('r.titre LIKE :titre')
+           ->setParameter('titre', '%' . $titre . '%');
     }
+    
+    if ($categorie) {
+        $qb->andWhere('r.categorie = :categorie')
+           ->setParameter('categorie', $categorie);
+    }
+    
+    if ($difficulte) {
+        $qb->andWhere('r.difficulte = :difficulte')
+           ->setParameter('difficulte', $difficulte);
+    }
+    
+    if ($tag) {
+        $qb->andWhere('t.id = :tag')
+           ->setParameter('tag', $tag);
+    }
+
+    return $qb->orderBy('r.dateCreation', 'DESC');
+}
+       
 }

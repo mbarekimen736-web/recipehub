@@ -1,0 +1,27 @@
+<!-- Remplacer cette ligne -->
+{{ knp_pagination_render(pagination) }}
+
+<!-- Par ceci -->
+<div class="d-flex justify-content-center">
+    <nav>
+        <ul class="pagination">
+            {% if pagination.currentPageNumber > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('recette_index', { page: pagination.currentPageNumber - 1, titre: titre, categorie: categorieId, difficulte: difficulte, tag: tagId }) }}">←</a>
+                </li>
+            {% endif %}
+            
+            {% for page in 1..pagination.pageCount %}
+                <li class="page-item {{ page == pagination.currentPageNumber ? 'active' : '' }}">
+                    <a class="page-link" href="{{ path('recette_index', { page: page, titre: titre, categorie: categorieId, difficulte: difficulte, tag: tagId }) }}">{{ page }}</a>
+                </li>
+            {% endfor %}
+            
+            {% if pagination.currentPageNumber < pagination.pageCount %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('recette_index', { page: pagination.currentPageNumber + 1, titre: titre, categorie: categorieId, difficulte: difficulte, tag: tagId }) }}">→</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>

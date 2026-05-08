@@ -6,8 +6,51 @@
 <div class="container mt-4">
     <h1 class="mb-4">🍳 Nos recettes</h1>
     
+    <!-- Formulaire de recherche avancée -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="titre" class="form-control" placeholder="Titre..." value="{{ titre }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="categorie" class="form-select">
+                        <option value="">Toutes les catégories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if categorieId == cat.id %}selected{% endif %}>
+                                {{ cat.icone }} {{ cat.nom }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="difficulte" class="form-select">
+                        <option value="">Difficulté</option>
+                        <option value="facile" {% if difficulte == 'facile' %}selected{% endif %}>🟢 Facile</option>
+                        <option value="moyen" {% if difficulte == 'moyen' %}selected{% endif %}>🟡 Moyen</option>
+                        <option value="difficile" {% if difficulte == 'difficile' %}selected{% endif %}>🔴 Difficile</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="tag" class="form-select">
+                        <option value="">Tous les tags</option>
+                        {% for t in tags %}
+                            <option value="{{ t.id }}" {% if tagId == t.id %}selected{% endif %}>
+                                🏷️ {{ t.nom }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">🔍 Rechercher</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Grille des recettes -->
     <div class="row">
-        {% for recette in recettes %}
+        {% for recette in pagination %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     {% if recette.imageName %}
@@ -52,9 +95,118 @@
             </div>
         {% else %}
             <div class="col-12">
-                <p>Aucune recette disponible.</p>
+                <div class="alert alert-info">Aucune recette trouvée.</div>
             </div>
         {% endfor %}
+    </div>
+    
+    <!-- Pagination manuelle -->
+    {% if pagination.pageCount > 1 %}
+        <div class="mt-4 d-flex justify-content-center">
+            <nav>
+                <ul class="pagination">
+                    {# Bouton Précédent #}
+                    {% if pagination.currentPageNumber > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('recette_index', { 
+                                page: pagination.currentPageNumber - 1,
+                                titre: titre,
+                                categorie: categorieId,
+                                difficulte: difficulte,
+                                tag: tagId
+                            }) }}">
+                                &laquo; Précédent
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo; Précédent</span>
+                        </li>
+                    {% endif %}
+                    
+                    {# Pages numérotées - Affiche max 5 pages autour de la page courante #}
+                    {% set startPage = max(1, pagination.currentPageNumber - 2) %}
+                    {% set endPage = min(pagination.pageCount, startPage + 4) %}
+                    
+                    {% if startPage > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('recette_index', { 
+                                page: 1,
+                                titre: titre,
+                                categorie: categorieId,
+                                difficulte: difficulte,
+                                tag: tagId
+                            }) }}">1</a>
+                        </li>
+                        {% if startPage > 2 %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endif %}
+                    
+                    {% for page in startPage..endPage %}
+                        {% if page == pagination.currentPageNumber %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('recette_index', { 
+                                    page: page,
+                                    titre: titre,
+                                    categorie: categorieId,
+                                    difficulte: difficulte,
+                                    tag: tagId
+                                }) }}">{{ page }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if endPage < pagination.pageCount %}
+                        {% if endPage < pagination.pageCount - 1 %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('recette_index', { 
+                                page: pagination.pageCount,
+                                titre: titre,
+                                categorie: categorieId,
+                                difficulte: difficulte,
+                                tag: tagId
+                            }) }}">{{ pagination.pageCount }}</a>
+                        </li>
+                    {% endif %}
+                    
+                    {# Bouton Suivant #}
+                    {% if pagination.currentPageNumber < pagination.pageCount %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('recette_index', { 
+                                page: pagination.currentPageNumber + 1,
+                                titre: titre,
+                                categorie: categorieId,
+                                difficulte: difficulte,
+                                tag: tagId
+                            }) }}">
+                                Suivant &raquo;
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Suivant &raquo;</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+    
+    <div class="text-center mt-2">
+        <small class="text-muted">
+            Page {{ pagination.currentPageNumber }} / {{ pagination.pageCount }} - 
+            Total : {{ pagination.totalItemCount }} recette(s)
+            {% if titre or categorieId or difficulte or tagId %}
+                (résultats filtrés)
+            {% endif %}
+        </small>
     </div>
 </div>
 {% endblock %}

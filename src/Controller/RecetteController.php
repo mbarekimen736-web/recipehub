@@ -3,11 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Recette;
+use App\Entity\CategorieRecette;
+use App\Entity\TagRecette;
 use App\Form\RecetteType;
 use App\Repository\RecetteRepository;
+use App\Repository\CategorieRecetteRepository;
+use App\Repository\TagRecetteRepository;
 use App\Service\FileUploader;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,16 +23,45 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class RecetteController extends AbstractController
 {
     #[Route('/', name: 'recette_index')]
-    public function index(RecetteRepository $recetteRepository): Response
-    {
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $recettes = $recetteRepository->findAll();
-        } else {
-            $recettes = $recetteRepository->findBy(['publiee' => true]);
-        }
+    public function index(
+        RecetteRepository $recetteRepository,
+        PaginatorInterface $paginator,
+        Request $request,
+        CategorieRecetteRepository $categorieRepo = null,
+        TagRecetteRepository $tagRepo = null
+    ): Response {
+        // Récupérer les filtres de recherche
+        $titre = $request->query->get('titre');
+        $categorieId = $request->query->get('categorie');
+        $difficulte = $request->query->get('difficulte');
+        $tagId = $request->query->get('tag');
+        
+        // Récupérer les objets Categorie et Tag si nécessaires
+        $categorie = $categorieId ? $categorieRepo->find($categorieId) : null;
+        $tag = $tagId ? $tagRepo->find($tagId) : null;
+        
+        // Utiliser le QueryBuilder avec filtres
+        $queryBuilder = $recetteRepository->findByFilters($titre, $categorie, $difficulte, $tag);
+        
+        // Appliquer la pagination (9 recettes par page)
+        $pagination = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            9
+        );
+        
+        // Récupérer toutes les catégories pour le filtre
+        $categories = $categorieRepo ? $categorieRepo->findAll() : [];
+        $tags = $tagRepo ? $tagRepo->findAll() : [];
         
         return $this->render('recette/index.html.twig', [
-            'recettes' => $recettes,
+            'pagination' => $pagination,
+            'titre' => $titre,
+            'categorieId' => $categorieId,
+            'difficulte' => $difficulte,
+            'tagId' => $tagId,
+            'categories' => $categories,
+            'tags' => $tags,
         ]);
     }
 
@@ -89,51 +123,51 @@ class RecetteController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'recette_edit')]
-public function edit(Recette $recette, Request $request, EntityManagerInterface $em, FileUploader $fileUploader, NotificationService $notificationService): Response
-{
-    if (!$this->isGranted('ROLE_ADMIN') && $this->getUser() !== $recette->getAuteur()) {
-        throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette recette.');
-    }
+    public function edit(Recette $recette, Request $request, EntityManagerInterface $em, FileUploader $fileUploader, NotificationService $notificationService): Response
+    {
+        if (!$this->isGranted('ROLE_ADMIN') && $this->getUser() !== $recette->getAuteur()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette recette.');
+        }
 
-    $wasPublished = $recette->isPubliee();
-    $oldImage = $recette->getImageName();
+        $wasPublished = $recette->isPubliee();
+        $oldImage = $recette->getImageName();
+        
+        $form = $this->createForm(RecetteType::class, $recette);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Gestion de la nouvelle image
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                if ($oldImage) {
+                    $fileUploader->remove($oldImage);
+                }
+                $newImageName = $fileUploader->upload($imageFile);
+                $recette->setImageName($newImageName);
+            }
+
+            $em->flush();
+
+            if (!$wasPublished && $recette->isPubliee()) {
+                try {
+                    $notificationService->notifierNouvelleRecette($recette);
+                    $this->addFlash('success', '✅ Recette publiée !');
+                } catch (\Exception $e) {
+                    $this->addFlash('warning', '⚠️ Recette modifiée mais l\'email a échoué.');
+                }
+            } else {
+                $this->addFlash('success', '✏️ Recette modifiée avec succès.');
+            }
+
+            return $this->redirectToRoute('recette_show', ['id' => $recette->getId()]);
+        }
+
+        return $this->render('recette/edit.html.twig', [
+            'form' => $form->createView(),
+            'recette' => $recette,
+        ]);
+    }
     
-    $form = $this->createForm(RecetteType::class, $recette);
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        // Gestion de la nouvelle image
-        $imageFile = $form->get('imageFile')->getData();
-        if ($imageFile) {
-            if ($oldImage) {
-                $fileUploader->remove($oldImage);
-            }
-            $newImageName = $fileUploader->upload($imageFile);
-            $recette->setImageName($newImageName);
-        }
-
-        $em->flush();
-
-        if (!$wasPublished && $recette->isPubliee()) {
-            try {
-                $notificationService->notifierNouvelleRecette($recette);
-                $this->addFlash('success', '✅ Recette publiée !');
-            } catch (\Exception $e) {
-                $this->addFlash('warning', '⚠️ Recette modifiée mais l\'email a échoué.');
-            }
-        } else {
-            $this->addFlash('success', '✏️ Recette modifiée avec succès.');
-        }
-
-        return $this->redirectToRoute('recette_show', ['id' => $recette->getId()]);
-    }
-
-    // IMPORTANT: Passer le formulaire à la vue
-    return $this->render('recette/edit.html.twig', [
-        'form' => $form->createView(),
-        'recette' => $recette,
-    ]);
-}
     #[Route('/{id}/delete', name: 'recette_delete', methods: ['POST'])]
     #[IsGranted('ROLE_CUISINIER')]
     public function delete(Recette $recette, Request $request, EntityManagerInterface $em, FileUploader $fileUploader): Response
@@ -157,28 +191,29 @@ public function edit(Recette $recette, Request $request, EntityManagerInterface 
 
         return $this->redirectToRoute('recette_index');
     }
+    
     #[Route('/setup-categories', name: 'setup_categories')]
-public function setupCategories(EntityManagerInterface $em): Response
-{
-    $categories = [
-        ['nom' => 'Plat', 'icone' => '🍝', 'description' => 'Plats principaux'],
-        ['nom' => 'Entrée', 'icone' => '🥗', 'description' => 'Entrées et apéritifs'],
-        ['nom' => 'Dessert', 'icone' => '🍰', 'description' => 'Desserts sucrés'],
-        ['nom' => 'Boisson', 'icone' => '🥤', 'description' => 'Boissons et smoothies'],
-        ['nom' => 'Snack', 'icone' => '🍕', 'description' => 'Snacks et en-cas'],
-        ['nom' => 'Soupe', 'icone' => '🥣', 'description' => 'Soupes et potages'],
-    ];
-    
-    foreach ($categories as $catData) {
-        $categorie = new \App\Entity\CategorieRecette();
-        $categorie->setNom($catData['nom']);
-        $categorie->setIcone($catData['icone']);
-        $categorie->setDescription($catData['description']);
-        $em->persist($categorie);
+    public function setupCategories(EntityManagerInterface $em): Response
+    {
+        $categories = [
+            ['nom' => 'Plat', 'icone' => '🍝', 'description' => 'Plats principaux'],
+            ['nom' => 'Entrée', 'icone' => '🥗', 'description' => 'Entrées et apéritifs'],
+            ['nom' => 'Dessert', 'icone' => '🍰', 'description' => 'Desserts sucrés'],
+            ['nom' => 'Boisson', 'icone' => '🥤', 'description' => 'Boissons et smoothies'],
+            ['nom' => 'Snack', 'icone' => '🍕', 'description' => 'Snacks et en-cas'],
+            ['nom' => 'Soupe', 'icone' => '🥣', 'description' => 'Soupes et potages'],
+        ];
+        
+        foreach ($categories as $catData) {
+            $categorie = new CategorieRecette();
+            $categorie->setNom($catData['nom']);
+            $categorie->setIcone($catData['icone']);
+            $categorie->setDescription($catData['description']);
+            $em->persist($categorie);
+        }
+        
+        $em->flush();
+        
+        return new Response('✅ 6 catégories créées avec succès ! <a href="/recette/new">Retour à la création</a>');
     }
-    
-    $em->flush();
-    
-    return new Response('✅ 6 catégories créées avec succès ! <a href="/recette/new">Retour à la création</a>');
-}
 }
