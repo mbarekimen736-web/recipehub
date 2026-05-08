@@ -89,54 +89,51 @@ class RecetteController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'recette_edit')]
-    #[IsGranted('ROLE_CUISINIER')]
-    public function edit(Recette $recette, Request $request, EntityManagerInterface $em, FileUploader $fileUploader, NotificationService $notificationService): Response
-    {
-        if (!$this->isGranted('ROLE_ADMIN') && $this->getUser() !== $recette->getAuteur()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette recette.');
-        }
-
-        $wasPublished = $recette->isPubliee();
-        $oldImage = $recette->getImageName();
-        
-        $form = $this->createForm(RecetteType::class, $recette);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Gestion de la nouvelle image
-            $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                // Supprimer l'ancienne image
-                if ($oldImage) {
-                    $fileUploader->remove($oldImage);
-                }
-                // Uploader la nouvelle
-                $newImageName = $fileUploader->upload($imageFile);
-                $recette->setImageName($newImageName);
-            }
-
-            $em->flush();
-
-            if (!$wasPublished && $recette->isPubliee()) {
-                try {
-                    $notificationService->notifierNouvelleRecette($recette);
-                    $this->addFlash('success', '✅ Recette publiée !');
-                } catch (\Exception $e) {
-                    $this->addFlash('warning', '⚠️ Recette modifiée mais l\'email a échoué.');
-                }
-            } else {
-                $this->addFlash('success', '✏️ Recette modifiée avec succès.');
-            }
-
-            return $this->redirectToRoute('recette_show', ['id' => $recette->getId()]);
-        }
-
-        return $this->render('recette/edit.html.twig', [
-            'form' => $form->createView(),
-            'recette' => $recette,
-        ]);
+public function edit(Recette $recette, Request $request, EntityManagerInterface $em, FileUploader $fileUploader, NotificationService $notificationService): Response
+{
+    if (!$this->isGranted('ROLE_ADMIN') && $this->getUser() !== $recette->getAuteur()) {
+        throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette recette.');
     }
 
+    $wasPublished = $recette->isPubliee();
+    $oldImage = $recette->getImageName();
+    
+    $form = $this->createForm(RecetteType::class, $recette);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Gestion de la nouvelle image
+        $imageFile = $form->get('imageFile')->getData();
+        if ($imageFile) {
+            if ($oldImage) {
+                $fileUploader->remove($oldImage);
+            }
+            $newImageName = $fileUploader->upload($imageFile);
+            $recette->setImageName($newImageName);
+        }
+
+        $em->flush();
+
+        if (!$wasPublished && $recette->isPubliee()) {
+            try {
+                $notificationService->notifierNouvelleRecette($recette);
+                $this->addFlash('success', '✅ Recette publiée !');
+            } catch (\Exception $e) {
+                $this->addFlash('warning', '⚠️ Recette modifiée mais l\'email a échoué.');
+            }
+        } else {
+            $this->addFlash('success', '✏️ Recette modifiée avec succès.');
+        }
+
+        return $this->redirectToRoute('recette_show', ['id' => $recette->getId()]);
+    }
+
+    // IMPORTANT: Passer le formulaire à la vue
+    return $this->render('recette/edit.html.twig', [
+        'form' => $form->createView(),
+        'recette' => $recette,
+    ]);
+}
     #[Route('/{id}/delete', name: 'recette_delete', methods: ['POST'])]
     #[IsGranted('ROLE_CUISINIER')]
     public function delete(Recette $recette, Request $request, EntityManagerInterface $em, FileUploader $fileUploader): Response

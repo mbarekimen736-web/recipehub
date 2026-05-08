@@ -1,11 +1,81 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier Recette{% endblock %}
+{% block title %}Modifier la recette{% endblock %}
 
 {% block body %}
-    <h1>Modifier Recette</h1>
-    {{ form_start(recetteForm) }}
-        {{ form_widget(recetteForm) }}
-        <button type="submit">Enregistrer</button>
-    {{ form_end(recetteForm) }}
+<div class="container mt-4">
+    <h1 class="mb-4">✏️ Modifier la recette : {{ recette.titre }}</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+            
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    {{ form_row(form.titre) }}
+                </div>
+                
+                <div class="col-md-12 mb-3">
+                    {{ form_row(form.description) }}
+                </div>
+                
+                <div class="col-md-12 mb-3">
+                    {{ form_row(form.instructions) }}
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    {{ form_row(form.tempsPreparation) }}
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    {{ form_row(form.tempsCuisson) }}
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    {{ form_row(form.difficulte) }}
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    {{ form_row(form.nbPersonnes) }}
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    {{ form_row(form.publiee) }}
+                </div>
+                
+                <div class="col-md-12 mb-3">
+                    {{ form_row(form.categorie) }}
+                </div>
+                
+                <div class="col-md-12 mb-3">
+                    {{ form_row(form.tags) }}
+                </div>
+                
+                <div class="col-md-12 mb-3">
+                    {{ form_row(form.imageFile) }}
+                    {% if recette.imageName %}
+                        <div class="mt-2">
+                            <p>Image actuelle :</p>
+                            <img src="{{ asset('uploads/recettes/' ~ recette.imageName) }}" 
+                                 alt="{{ recette.titre }}" 
+                                 style="max-width: 200px; max-height: 150px;"
+                                 class="img-thumbnail">
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Enregistrer les modifications
+                </button>
+                <a href="{{ path('recette_show', {'id': recette.id}) }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+            </div>
+            
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
 {% endblock %}
