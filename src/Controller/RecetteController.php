@@ -160,4 +160,28 @@ class RecetteController extends AbstractController
 
         return $this->redirectToRoute('recette_index');
     }
+    #[Route('/setup-categories', name: 'setup_categories')]
+public function setupCategories(EntityManagerInterface $em): Response
+{
+    $categories = [
+        ['nom' => 'Plat', 'icone' => '🍝', 'description' => 'Plats principaux'],
+        ['nom' => 'Entrée', 'icone' => '🥗', 'description' => 'Entrées et apéritifs'],
+        ['nom' => 'Dessert', 'icone' => '🍰', 'description' => 'Desserts sucrés'],
+        ['nom' => 'Boisson', 'icone' => '🥤', 'description' => 'Boissons et smoothies'],
+        ['nom' => 'Snack', 'icone' => '🍕', 'description' => 'Snacks et en-cas'],
+        ['nom' => 'Soupe', 'icone' => '🥣', 'description' => 'Soupes et potages'],
+    ];
+    
+    foreach ($categories as $catData) {
+        $categorie = new \App\Entity\CategorieRecette();
+        $categorie->setNom($catData['nom']);
+        $categorie->setIcone($catData['icone']);
+        $categorie->setDescription($catData['description']);
+        $em->persist($categorie);
+    }
+    
+    $em->flush();
+    
+    return new Response('✅ 6 catégories créées avec succès ! <a href="/recette/new">Retour à la création</a>');
+}
 }
