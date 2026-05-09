@@ -19,13 +19,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
-
-#[Route('/recette')]
+#[Route('/recette', name: 'recette_')]
 class RecetteController extends AbstractController
 {
-    #[Route('/', name: 'recette_index')]
+    #[Route('/', name: 'index')]
     public function index(
         RecetteRepository $recetteRepository,
         PaginatorInterface $paginator,
@@ -68,9 +68,9 @@ class RecetteController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'recette_new')]
+    #[Route('/new', name: 'new')]
     #[IsGranted('ROLE_CUISINIER')]
-    public function new(Request $request, EntityManagerInterface $em, FileUploader $fileUploader, NotificationService $notificationService): Response
+    public function new(Request $request, EntityManagerInterface $em, FileUploader $fileUploader, NotificationService $notificationService, TranslatorInterface $translator): Response
     {
         $recette = new Recette();
         $recette->setAuteur($this->getUser());
@@ -95,12 +95,12 @@ class RecetteController extends AbstractController
             if ($isPublished) {
                 try {
                     $notificationService->notifierNouvelleRecette($recette);
-                    $this->addFlash('success', '✅ Recette créée et publiée !');
+                    $this->addFlash('success', $translator->trans('recipe_created'));
                 } catch (\Exception $e) {
-                    $this->addFlash('warning', '⚠️ Recette créée mais l\'email a échoué.');
+                    $this->addFlash('warning', '⚠️ ' . $translator->trans('recipe_created') . ' ' . $translator->trans('email_failed'));
                 }
             } else {
-                $this->addFlash('success', '📝 Recette créée en brouillon.');
+                $this->addFlash('success', '📝 ' . $translator->trans('recipe_draft'));
             }
 
             return $this->redirectToRoute('recette_show', ['id' => $recette->getId()]);
@@ -111,27 +111,27 @@ class RecetteController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'recette_show')]
-public function show(Recette $recette, RequestStack $requestStack): Response
-{
-    if (!$recette->isPubliee() && 
-        !$this->isGranted('ROLE_ADMIN') && 
-        $this->getUser() !== $recette->getAuteur()) {
-        throw $this->createNotFoundException('Recette non disponible.');
+    #[Route('/{id}', name: 'show')]
+    public function show(Recette $recette, RequestStack $requestStack): Response
+    {
+        if (!$recette->isPubliee() && 
+            !$this->isGranted('ROLE_ADMIN') && 
+            $this->getUser() !== $recette->getAuteur()) {
+            throw $this->createNotFoundException('Recette non disponible.');
+        }
+        
+        // Récupérer les favoris de la session
+        $session = $requestStack->getSession();
+        $favorisIds = $session->get('favoris', []);
+        
+        return $this->render('recette/show.html.twig', [
+            'recette' => $recette,
+            'favorisIds' => $favorisIds,
+        ]);
     }
-    
-    // Récupérer les favoris de la session
-    $session = $requestStack->getSession();
-    $favorisIds = $session->get('favoris', []);
-    
-    return $this->render('recette/show.html.twig', [
-        'recette' => $recette,
-        'favorisIds' => $favorisIds,
-    ]);
-}
 
-    #[Route('/{id}/edit', name: 'recette_edit')]
-    public function edit(Recette $recette, Request $request, EntityManagerInterface $em, FileUploader $fileUploader, NotificationService $notificationService): Response
+    #[Route('/{id}/edit', name: 'edit')]
+    public function edit(Recette $recette, Request $request, EntityManagerInterface $em, FileUploader $fileUploader, NotificationService $notificationService, TranslatorInterface $translator): Response
     {
         if (!$this->isGranted('ROLE_ADMIN') && $this->getUser() !== $recette->getAuteur()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette recette.');
@@ -159,12 +159,12 @@ public function show(Recette $recette, RequestStack $requestStack): Response
             if (!$wasPublished && $recette->isPubliee()) {
                 try {
                     $notificationService->notifierNouvelleRecette($recette);
-                    $this->addFlash('success', '✅ Recette publiée !');
+                    $this->addFlash('success', '✅ ' . $translator->trans('recipe_published'));
                 } catch (\Exception $e) {
-                    $this->addFlash('warning', '⚠️ Recette modifiée mais l\'email a échoué.');
+                    $this->addFlash('warning', '⚠️ ' . $translator->trans('recipe_updated') . ' ' . $translator->trans('email_failed'));
                 }
             } else {
-                $this->addFlash('success', '✏️ Recette modifiée avec succès.');
+                $this->addFlash('success', '✏️ ' . $translator->trans('recipe_updated'));
             }
 
             return $this->redirectToRoute('recette_show', ['id' => $recette->getId()]);
@@ -176,9 +176,9 @@ public function show(Recette $recette, RequestStack $requestStack): Response
         ]);
     }
     
-    #[Route('/{id}/delete', name: 'recette_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
     #[IsGranted('ROLE_CUISINIER')]
-    public function delete(Recette $recette, Request $request, EntityManagerInterface $em, FileUploader $fileUploader): Response
+    public function delete(Recette $recette, Request $request, EntityManagerInterface $em, FileUploader $fileUploader, TranslatorInterface $translator): Response
     {
         if (!$this->isGranted('ROLE_ADMIN') && $this->getUser() !== $recette->getAuteur()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer cette recette.');
@@ -192,9 +192,9 @@ public function show(Recette $recette, RequestStack $requestStack): Response
             
             $em->remove($recette);
             $em->flush();
-            $this->addFlash('success', '🗑️ Recette supprimée avec succès.');
+            $this->addFlash('success', '🗑️ ' . $translator->trans('recipe_deleted'));
         } else {
-            $this->addFlash('error', '❌ Token CSRF invalide.');
+            $this->addFlash('error', '❌ ' . $translator->trans('csrf_invalid'));
         }
 
         return $this->redirectToRoute('recette_index');

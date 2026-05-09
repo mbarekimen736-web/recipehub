@@ -1,0 +1,64 @@
+# Français
+welcome: Bienvenue sur RecipeHub
+home: Accueil
+recipes: Recettes
+create_recipe: Créer une recette
+edit_recipe: Modifier la recette
+delete_recipe: Supprimer la recette
+save: Enregistrer
+cancel: Annuler
+category: Catégorie
+difficulty: Difficulté
+easy: Facile
+medium: Moyen
+hard: Difficile
+preparation_time: Temps de préparation
+cooking_time: Temps de cuisson
+total_time: Temps total
+minutes: minutes
+persons: Personnes
+ingredients: Ingrédients
+add_ingredient: Ajouter un ingrédient
+favorites: Favoris
+search: Rechercher
+login: Connexion
+logout: Déconnexion
+register: Inscription
+recipe_created: Recette créée avec succès
+recipe_updated: Recette modifiée avec succès
+recipe_deleted: Recette supprimée avec succès
+ingredient_added: Ingrédient ajouté avec succès
+ingredient_deleted: Ingrédient supprimé avec succès
+no_recipes: Aucune recette trouvée
+published: Publiée
+draft: Brouillon
+back_to_list: Retour à la liste
+description: Description
+instructions: Instructions
+author: Auteur
+date: Date
+email_failed: Email non envoyé
+recipe_draft: Recette en brouillon
+recipe_published: Recette publiée
+csrf_invalid: Token CSRF invalide
+app_name: الدمق و الهريسة
+recipes_tunisian: Recettes Tunisiennes
+french: Français
+english: Anglais
+arabic: Arabe
+tunisian: Tunisien
+language: Langue
+hero_description: Découvrez les saveurs authentiques de la cuisine tunisienne
+discover_recipes: Découvrir les recettes
+footer_description: Plateforme de partage de recettes tunisiennes
+tunisia: Tunisie
+harissa: Harissa
+quick_links: Liens rapides
+all_recipes: Toutes les recettes
+follow_us: Suivez-nous
+all_rights_reserved: Tous droits réservés
+tagline: La cuisine tunisienne, un art de vivre
+confirm_title: Confirmation
+confirm_text: Voulez-vous vraiment supprimer cette recette ?
+confirm_yes: Oui, supprimer
+confirm_no: Annuler

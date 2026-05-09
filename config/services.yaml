@@ -26,3 +26,10 @@ services:
     App\Service\FileUploader:
         arguments:
             $targetDirectory: '%upload_directory%'
+
+    # Locale Listener for multilanguage support
+    App\EventListener\LocaleListener:
+        arguments:
+            $defaultLocale: 'fr'
+        tags:
+            - { name: kernel.event_subscriber }

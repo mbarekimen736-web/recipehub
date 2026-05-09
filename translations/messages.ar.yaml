@@ -1,0 +1,64 @@
+# العربية
+welcome: مرحبا بكم في RecipeHub
+home: الرئيسية
+recipes: الوصفات
+create_recipe: إضافة وصفة
+edit_recipe: تعديل الوصفة
+delete_recipe: حذف الوصفة
+save: حفظ
+cancel: إلغاء
+category: التصنيف
+difficulty: الصعوبة
+easy: سهل
+medium: متوسط
+hard: صعب
+preparation_time: وقت التحضير
+cooking_time: وقت الطهي
+total_time: الوقت الإجمالي
+minutes: دقائق
+persons: أشخاص
+ingredients: المكونات
+add_ingredient: إضافة مكون
+favorites: المفضلة
+search: بحث
+login: تسجيل الدخول
+logout: تسجيل الخروج
+register: إنشاء حساب
+recipe_created: تم إنشاء الوصفة بنجاح
+recipe_updated: تم تعديل الوصفة بنجاح
+recipe_deleted: تم حذف الوصفة بنجاح
+ingredient_added: تم إضافة المكون بنجاح
+ingredient_deleted: تم حذف المكون بنجاح
+no_recipes: لا توجد وصفات
+published: منشورة
+draft: مسودة
+back_to_list: العودة إلى القائمة
+description: الوصف
+instructions: التعليمات
+author: المؤلف
+date: التاريخ
+email_failed: لم يتم إرسال البريد الإلكتروني
+recipe_draft: الوصفة كمسودة
+recipe_published: تم نشر الوصفة
+csrf_invalid: رمز CSRF غير صالح
+app_name: الدمق و الهريسة
+recipes_tunisian: وصفات تونسية
+french: الفرنسية
+english: الإنجليزية
+arabic: العربية
+tunisian: التونسية
+language: اللغة
+hero_description: اكتشف النكهات الأصيلة للمطبخ التونسي
+discover_recipes: اكتشف الوصفات
+footer_description: منصة مشاركة الوصفات التونسية
+tunisia: تونس
+harissa: هريسة
+quick_links: روابط سريعة
+all_recipes: جميع الوصفات
+follow_us: تابعنا
+all_rights_reserved: جميع الحقوق محفوظة
+tagline: المطبخ التونسي، فن الحياة
+confirm_title: تأكيد
+confirm_text: هل أنت متأكد من حذف هذه الوصفة؟
+confirm_yes: نعم، حذف
+confirm_no: إلغاء

@@ -1,0 +1,64 @@
+# Tunisian Derja
+welcome: أهلا بيك في RecipeHub
+home: الصفحة الأولى
+recipes: لوصفات
+create_recipe: أضف وصفة
+edit_recipe: بدل الوصفة
+delete_recipe: أحذف الوصفة
+save: أحفظ
+cancel: ألغي
+category: التصنيف
+difficulty: الصعوبة
+easy: ساهل
+medium: متوسط
+hard: صعيب
+preparation_time: وقت التحضير
+cooking_time: وقت الطيب
+total_time: الوقت الكل
+minutes: دقايق
+persons: أشخاص
+ingredients: المقادير
+add_ingredient: زيد مقدار
+favorites: المفضلة
+search: بحث
+login: أدخل
+logout: أخرج
+register: سجل روحك
+recipe_created: الوصفة تضافت بنجاح
+recipe_updated: الوصفة تبدلت بنجاح
+recipe_deleted: الوصفة تحذفت بنجاح
+ingredient_added: المقدار تزاد بنجاح
+ingredient_deleted: المقدار تحذف بنجاح
+no_recipes: ماكاش وصفات
+published: منشورة
+draft: مسودة
+back_to_list: أرجع للقائمة
+description: لوصف
+instructions: التعليمات
+author: الكاتب
+date: التاريخ
+email_failed: ماأرسلش الإيميل
+recipe_draft: لوصفة محفوظة كمسودة
+recipe_published: لوصفة منشورة
+csrf_invalid: الرمز مش صحيح
+app_name: الدمق و الهريسة
+recipes_tunisian: وصفات تونسية
+french: الفرنسية
+english: الإنجليزية
+arabic: العربية
+tunisian: التونسية
+language: اللغة
+hero_description: إكتشف النكهات الأصيلة للمطبخ التونسي
+discover_recipes: إكتشف لوصفات
+footer_description: منصة مشاركة لوصفات التونسية
+tunisia: تونس
+harissa: هريسة
+quick_links: رايادات سريعة
+all_recipes: كامل لوصفات
+follow_us: تابعنا
+all_rights_reserved: جميع الحقوق محفوظة
+tagline: لمطبخ التونسي، فن الحياة
+confirm_title: تأكيد
+confirm_text: هل أنت متأكد من حذف هالوصفة؟
+confirm_yes: آي، أحذف
+confirm_no: ألغي
