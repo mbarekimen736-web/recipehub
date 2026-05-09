@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"version":2,"defects":[],"times":{"App\\Tests\\Api\\RecetteApiTest::testGetRecettesApi":0,"App\\Tests\\Api\\RecetteApiTest::testPostRecetteApiWithValidData":0,"App\\Tests\\Api\\RecetteApiTest::testPostRecetteApiWithInvalidData":0}}
+=======
+{"version":2,"defects":[],"times":{"App\\Tests\\Api\\RecetteApiTest::testGetRecettesApi":0.007,"App\\Tests\\Api\\RecetteApiTest::testPostRecetteApiWithValidData":0.002,"App\\Tests\\Api\\RecetteApiTest::testPostRecetteApiWithInvalidData":0}}
+>>>>>>> 0db69b0bf283ced0cdc0bd534795778ebb7dd9c8
