@@ -90,6 +90,39 @@
             transform: scale(1.05);
             color: white;
         }
+        /* Style pour les tags dans le formulaire */
+.tags-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.tags-checkbox-group label {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 15px;
+    background: #f8f9fa;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin: 0;
+}
+
+.tags-checkbox-group label:hover {
+    background: #e74c3c;
+    color: white;
+    transform: scale(1.05);
+}
+
+.tags-checkbox-group input {
+    margin-right: 8px;
+    transform: scale(1.1);
+}
+
+.tags-checkbox-group input:checked + label {
+    background: #e74c3c;
+    color: white;
+}
         .recipe-card {
             border: none;
             border-radius: 15px;

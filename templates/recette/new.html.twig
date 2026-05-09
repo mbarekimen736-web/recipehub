@@ -1,12 +1,168 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Ajouter une recette - الدمق و الهريسة{% endblock %}
+
+{% block hero %}{% endblock %}
+
 {% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-gradient text-white rounded-top-4" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                    <h2 class="h4 mb-0 text-center py-2">
+                        <i class="fas fa-utensils me-2"></i> 
+                        Ajouter une nouvelle recette
+                    </h2>
+                </div>
+                
+                <div class="card-body p-4">
+                    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+                    
+                    <div class="row">
+                        <!-- Titre -->
+                        <div class="col-12 mb-3">
+                            {{ form_label(form.titre, 'Titre de la recette', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.titre, {'attr': {'class': 'form-control form-control-lg rounded-pill', 'placeholder': 'Ex: Chakchouka tunisienne'}}) }}
+                            <div class="text-danger small mt-1">
+                                {{ form_errors(form.titre) }}
+                            </div>
+                        </div>
+                        
+                        <!-- Description -->
+                        <div class="col-12 mb-3">
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control rounded-3', 'rows': 3, 'placeholder': 'Décrivez brièvement votre recette...'}}) }}
+                            <div class="text-danger small mt-1">
+                                {{ form_errors(form.description) }}
+                            </div>
+                        </div>
+                        
+                        <!-- Instructions -->
+                        <div class="col-12 mb-3">
+                            {{ form_label(form.instructions, 'Instructions', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.instructions, {'attr': {'class': 'form-control rounded-3', 'rows': 5, 'placeholder': 'Détaillez les étapes de préparation...'}}) }}
+                            <div class="text-danger small mt-1">
+                                {{ form_errors(form.instructions) }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Temps préparation -->
+                            <div class="col-md-4 mb-3">
+                                {{ form_label(form.tempsPreparation, '⏱️ Préparation (min)', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                {{ form_widget(form.tempsPreparation, {'attr': {'class': 'form-control rounded-pill', 'min': 1}}) }}
+                                <div class="text-danger small mt-1">
+                                    {{ form_errors(form.tempsPreparation) }}
+                                </div>
+                            </div>
+                            
+                            <!-- Temps cuisson -->
+                            <div class="col-md-4 mb-3">
+                                {{ form_label(form.tempsCuisson, '🔥 Cuisson (min)', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                {{ form_widget(form.tempsCuisson, {'attr': {'class': 'form-control rounded-pill', 'placeholder': 'Optionnel'}}) }}
+                                <div class="text-danger small mt-1">
+                                    {{ form_errors(form.tempsCuisson) }}
+                                </div>
+                            </div>
+                            
+                            <!-- Nombre personnes -->
+                            <div class="col-md-4 mb-3">
+                                {{ form_label(form.nbPersonnes, '👥 Nombre de personnes', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                {{ form_widget(form.nbPersonnes, {'attr': {'class': 'form-control rounded-pill', 'min': 1, 'max': 50}}) }}
+                                <div class="text-danger small mt-1">
+                                    {{ form_errors(form.nbPersonnes) }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Difficulté -->
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.difficulte, '⭐ Difficulté', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                {{ form_widget(form.difficulte, {'attr': {'class': 'form-select rounded-pill'}}) }}
+                                <div class="text-danger small mt-1">
+                                    {{ form_errors(form.difficulte) }}
+                                </div>
+                            </div>
+                            
+                            <!-- Catégorie -->
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.categorie, '📂 Catégorie', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                {{ form_widget(form.categorie, {'attr': {'class': 'form-select rounded-pill'}}) }}
+                                <div class="text-danger small mt-1">
+                                    {{ form_errors(form.categorie) }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tags -->
+                        <div class="col-12 mb-3">
+                            {{ form_label(form.tags, '🏷️ Tags', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            <div class="border rounded-3 p-3 bg-light">
+                                {{ form_widget(form.tags, {'attr': {'class': 'tags-checkbox-group'}}) }}
+                            </div>
+                            <small class="text-muted">Sélectionnez un ou plusieurs tags</small>
+                        </div>
+                        
+                        <!-- Image -->
+                        <div class="col-12 mb-3">
+                            {{ form_label(form.imageFile, '🖼️ Image de la recette', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.imageFile, {'attr': {'class': 'form-control', 'accept': 'image/jpeg,image/png,image/webp'}}) }}
+                            <small class="text-muted">Formats acceptés : JPEG, PNG, WebP (max 2 Mo)</small>
+                            <div class="text-danger small mt-1">
+                                {{ form_errors(form.imageFile) }}
+                            </div>
+                        </div>
+                        
+                        <!-- Publiée -->
+                        <div class="col-12 mb-3">
+                            <div class="form-check form-switch">
+                                {{ form_widget(form.publiee, {'attr': {'class': 'form-check-input', 'role': 'switch', 'style': 'transform: scale(1.2);'}}) }}
+                                {{ form_label(form.publiee, '📢 Publier la recette immédiatement', {'label_attr': {'class': 'form-check-label ms-2 fw-bold'}}) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ path('recette_index') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="fas fa-arrow-left me-2"></i> Annuler
+                        </a>
+                        <button type="submit" class="btn btn-red rounded-pill px-5">
+                            <i class="fas fa-save me-2"></i> Publier la recette
+                        </button>
+                    </div>
+                    
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<h1>New Recipe</h1>
-
-{{ form_start(form) }}
-{{ form_widget(form) }}
-<button>Save</button>
-{{ form_end(form) }}
-
+<style>
+    .btn-red {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        border: none;
+        color: white;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .btn-red:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+        background: linear-gradient(135deg, #c0392b, #e74c3c);
+        color: white;
+    }
+    .tags-checkbox-group label {
+        margin-right: 15px;
+        cursor: pointer;
+    }
+    .tags-checkbox-group input {
+        margin-right: 5px;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #e74c3c;
+        box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+    }
+</style>
 {% endblock %}

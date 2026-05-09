@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - الدمق و الهريسة{% endblock %}
+
+{% block hero %}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-gradient text-white rounded-top-4 text-center py-3" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                    <i class="fas fa-user-plus fa-2x mb-2"></i>
+                    <h2 class="h4 mb-0">Créer un compte</h2>
+                    <p class="small mt-2 mb-0 opacity-75">Rejoignez notre communauté culinaire</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    {{ form_start(registrationForm, {'attr': {'class': 'needs-validation'}}) }}
+                    
+                    <!-- Pseudo -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-user me-2"></i>Pseudo
+                        </label>
+                        {{ form_widget(registrationForm.pseudo, {'attr': {'class': 'form-control rounded-pill', 'placeholder': 'Votre pseudo'}}) }}
+                        <div class="text-danger small mt-1">
+                            {{ form_errors(registrationForm.pseudo) }}
+                        </div>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-envelope me-2"></i>Email
+                        </label>
+                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control rounded-pill', 'placeholder': 'exemple@email.com'}}) }}
+                        <div class="text-danger small mt-1">
+                            {{ form_errors(registrationForm.email) }}
+                        </div>
+                    </div>
+                    
+                    <!-- Mot de passe -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-lock me-2"></i>Mot de passe
+                        </label>
+                        {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control rounded-pill', 'placeholder': '••••••••'}}) }}
+                        <div class="text-danger small mt-1">
+                            {{ form_errors(registrationForm.plainPassword) }}
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Minimum 6 caractères
+                        </small>
+                    </div>
+                    
+                    <!-- Accepter les termes -->
+                    <div class="mb-4">
+                        <div class="form-check">
+                            {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input', 'required': true}}) }}
+                            <label class="form-check-label">
+                                J'accepte les <a href="#" class="text-decoration-none">conditions d'utilisation</a>
+                            </label>
+                        </div>
+                        <div class="text-danger small mt-1">
+                            {{ form_errors(registrationForm.agreeTerms) }}
+                        </div>
+                    </div>
+                    
+                    <!-- Bouton -->
+                    <button type="submit" class="btn btn-red w-100 rounded-pill py-2">
+                        <i class="fas fa-arrow-right me-2"></i>
+                        S'inscrire
+                    </button>
+                    
+                    <!-- Lien connexion -->
+                    <div class="text-center mt-4">
+                        <p class="mb-0">
+                            Déjà un compte ? 
+                            <a href="{{ path('app_login') }}" class="text-decoration-none fw-bold" style="color: #e74c3c;">
+                                Se connecter
+                            </a>
+                        </p>
+                    </div>
+                    
+                    {{ form_end(registrationForm) }}
+                </div>
+            </div>
+            
+            <!-- Décorations -->
+            <div class="text-center mt-4">
+                <div class="spice-decoration-mini">
+                    🌶️ 🧄 🫒 🍅 🥘
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-red {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        border: none;
+        color: white;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .btn-red:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+        background: linear-gradient(135deg, #c0392b, #e74c3c);
+        color: white;
+    }
+    .form-control:focus {
+        border-color: #e74c3c;
+        box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+    }
+    .spice-decoration-mini {
+        font-size: 1.5rem;
+        opacity: 0.5;
+    }
+    .card-header {
+        border-bottom: none;
+    }
+    .card {
+        background: white;
+    }
+</style>
+{% endblock %}
