@@ -49,7 +49,7 @@
                     <p><strong>⏲️ Total :</strong> {{ (recette.tempsPreparation + (recette.tempsCuisson ?? 0))|cooking_time_format }}</p>
                     <p><strong>👥 Personnes :</strong> {{ recette.nbPersonnes }}</p>
                     <p><strong>📅 Créée :</strong> {{ recette.dateCreation|time_ago }}</p>
-                    <p><strong>👨‍🍳 Auteur :</strong> {{ recette.auteur.pseudo }}</p>
+                    <p><strong>👨‍🍳 Auteur :</strong> {{ recette.auteurPseudo ?: 'Anonyme' }}</p>
                 </div>
             </div>
         </div>
