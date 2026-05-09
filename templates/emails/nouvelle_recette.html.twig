@@ -70,8 +70,12 @@
         <h2>{{ recette.titre }}</h2>
         
         <div class="info">
-            <p><strong>👨‍🍳 Auteur :</strong> {{ recette.auteur.pseudo }}</p>
-            <p><strong>📂 Catégorie :</strong> {{ recette.categorie.nom }}</p>
+            <p><strong>👨‍🍳 Auteur :</strong> {{ recette.auteurPseudo }}</p>
+            <p><strong>📂 Catégorie :</strong> {{ recette.categorie.nom }} {{ recette.categorie.icone }}</p>
+            <p><strong>⏱️ Temps de préparation :</strong> {{ recette.tempsPreparation }} minutes</p>
+            {% if recette.tempsCuisson %}
+                <p><strong>🔥 Temps de cuisson :</strong> {{ recette.tempsCuisson }} minutes</p>
+            {% endif %}
             <p><strong>⏱️ Temps total :</strong> {{ recette.tempsPreparation + (recette.tempsCuisson ?? 0) }} minutes</p>
             <p>
                 <strong>📊 Difficulté :</strong>
@@ -100,7 +104,7 @@
     
     <div class="footer">
         <p>Cet email a été envoyé automatiquement par RecipeHub.</p>
-        <p>© 2024 RecipeHub - Tous droits réservés</p>
+        <p>© 2025 RecipeHub - Tous droits réservés</p>
     </div>
 </body>
 </html>
