@@ -44,6 +44,13 @@
         .nav-link:hover {
             color: var(--primary-red) !important;
         }
+        .favoris-badge {
+            position: relative;
+            top: -8px;
+            right: 5px;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+        }
         .hero {
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920');
@@ -144,12 +151,32 @@
                     </li>
                 {% endif %}
                 
+                <!-- Lien vers les favoris (pour tous les utilisateurs connectés) -->
+                {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{{ path('favoris_liste') }}">
+                            <i class="fas fa-star text-warning me-1"></i> Favoris
+                            {% set nbFavoris = app.session.get('favoris')|length %}
+                            {% if nbFavoris > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger favoris-badge">
+                                    {{ nbFavoris }}
+                                    <span class="visually-hidden">favoris</span>
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endif %}
+                
                 {% if app.user %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                             <i class="fas fa-user me-1"></i> {{ app.user.pseudo }}
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ path('favoris_liste') }}">
+                                <i class="fas fa-star text-warning me-2"></i> Mes favoris
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ path('app_logout') }}">
                                 <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
                             </a></li>
@@ -222,6 +249,7 @@
                     {% if is_granted('ROLE_CUISINIER') %}
                         <li><a href="{{ path('recette_new') }}">Ajouter une recette</a></li>
                     {% endif %}
+                    <li><a href="{{ path('favoris_liste') }}">Mes favoris</a></li>
                 </ul>
             </div>
             <div class="col-md-4 mb-4">
@@ -246,6 +274,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Confirmation de suppression pour les formulaires avec classe delete-form
         const deleteForms = document.querySelectorAll('.delete-form');
         deleteForms.forEach(form => {
             form.addEventListener('submit', function(e) {
@@ -260,10 +289,34 @@
                     confirmButtonText: 'Oui, supprimer',
                     cancelButtonText: 'Annuler'
                 }).then((result) => {
-                    if (result.isConfirmed) form.submit();
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
                 });
             });
         });
+        
+        // Confirmation pour vider les favoris
+        const clearFavorisBtn = document.querySelector('#clear-favoris');
+        if (clearFavorisBtn) {
+            clearFavorisBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Vider les favoris',
+                    text: 'Êtes-vous sûr de vouloir supprimer toutes vos recettes favorites ?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e74c3c',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Oui, vider',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('clear-favoris-form').submit();
+                    }
+                });
+            });
+        }
     });
 </script>
 

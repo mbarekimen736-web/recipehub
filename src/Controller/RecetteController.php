@@ -18,6 +18,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+
 
 #[Route('/recette')]
 class RecetteController extends AbstractController
@@ -109,18 +112,23 @@ class RecetteController extends AbstractController
     }
 
     #[Route('/{id}', name: 'recette_show')]
-    public function show(Recette $recette): Response
-    {
-        if (!$recette->isPubliee() && 
-            !$this->isGranted('ROLE_ADMIN') && 
-            $this->getUser() !== $recette->getAuteur()) {
-            throw $this->createNotFoundException('Recette non disponible.');
-        }
-
-        return $this->render('recette/show.html.twig', [
-            'recette' => $recette,
-        ]);
+public function show(Recette $recette, RequestStack $requestStack): Response
+{
+    if (!$recette->isPubliee() && 
+        !$this->isGranted('ROLE_ADMIN') && 
+        $this->getUser() !== $recette->getAuteur()) {
+        throw $this->createNotFoundException('Recette non disponible.');
     }
+    
+    // Récupérer les favoris de la session
+    $session = $requestStack->getSession();
+    $favorisIds = $session->get('favoris', []);
+    
+    return $this->render('recette/show.html.twig', [
+        'recette' => $recette,
+        'favorisIds' => $favorisIds,
+    ]);
+}
 
     #[Route('/{id}/edit', name: 'recette_edit')]
     public function edit(Recette $recette, Request $request, EntityManagerInterface $em, FileUploader $fileUploader, NotificationService $notificationService): Response
